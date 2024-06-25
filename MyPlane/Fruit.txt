@@ -1,4 +1,9 @@
 Apple
 Banana
 Orange
+<<<<<<< HEAD
 Lemon
+=======
+Coco
+荔枝
+>>>>>>> dev3
