@@ -27,7 +27,7 @@ class Hero(pygame.sprite.Sprite):
         self.rect.x = 80
         self.rect.y = 60
         self.speed = speed
-
+        self.ready_to_fire = 0
     def update(self,*args):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP]:
@@ -39,8 +39,13 @@ class Hero(pygame.sprite.Sprite):
         if keys[pygame.K_RIGHT]:
             self.rect.x += self.speed
         if keys[pygame.K_SPACE]:
-            self.fire()
-
+            if self.ready_to_fire == 0:
+                self.fire()
+            self.ready_to_fire += 1
+            if self.ready_to_fire > 5:
+                self.ready_to_fire = 0
+        else:
+            self.ready_to_fire = 0
     def fire(self):
         #发射子弹
         bullet = Bullet(10)
@@ -71,17 +76,35 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, *args):
        self.rect.x -= self.speed
 
-
+class BackGround(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("./images/background.png")
+        self.rect = self.image.get_rect()
+        self.ready_to_move = 0
+    def update(self, *args):
+        if self.ready_to_move == 0:
+            self.rect.x -= 1
+            if self.rect.right <= 0:
+                self.rect.x = self.rect.width
+        if self.ready_to_move > 2:
+            self.ready_to_move = 0
+        else:
+            self.ready_to_move += 1
 #初始化英雄
 hero = Hero(2)
-# enemy1 = Enemy(random.randint(1,4))
-# enemy2 = Enemy(random.randint(1,4))
+
+#初始化背景
+bg = BackGround()
+bg1 = BackGround()
+bg1.rect.x = bg1.rect.width
 #初始化精灵组
+bg_group = pygame.sprite.Group()
 hero_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 hero_group.add(hero)
-
+bg_group.add(bg,bg1)
 
 
 #游戏循环
@@ -109,12 +132,8 @@ while True:
     # bullet_group.draw(screen)
     # pygame.display.update()
     #屏幕更新
-    for group in [hero_group, enemy_group, bullet_group]:
+    for group in [bg_group,hero_group, enemy_group, bullet_group]:
         group.update()
         group.draw(screen)
     pygame.display.update()
 
-#1221323git测试所用
-#789
-#jkl
-#15161718
